@@ -24,6 +24,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Badge
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
@@ -54,6 +57,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prerak.galleryandroid.ui.theme.BottomNavigator
+import com.prerak.galleryandroid.ui.theme.DemoPhotos
 import com.prerak.galleryandroid.ui.theme.GalleryAndroidTheme
 import kotlin.random.Random
 
@@ -72,153 +77,48 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally){
 
                    Box(modifier = Modifier
-                       .height(720.dp)
-                       .fillMaxWidth()
+                       .weight(16f)
                        .background(color = Color(0XFFF2F3F4)),
                        contentAlignment = Alignment.Center) {
                       //Conditional TopBox
-                       if(activeBadge.value ==1){ LibraryView(items = mutableListOf()) }
+                       when(activeBadge.value ){
+                           1 -> LibraryView(DemoPhotos())
+                           else->{}
+
+                       }
 
                     }
                     //BottomNavigatorBadge
-                    BottomNavigator(activeBadge.value) { activeBadge.value = it }
+                   Box(modifier = Modifier.weight(1f)){ BottomNavigator(activeBadge.value) { activeBadge.value = it } }
                 }
             }
         }
     }
 }
 
-@Composable
-fun DemoCard() {
-    Card(
-        shape = RoundedCornerShape(15.dp),
-        modifier = Modifier
-            .height(250.dp)
-            .width(300.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        )
-    )
-    {
-        Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
-        {
-            Image(painter = painterResource(id =R.drawable.demoimage),
-                contentDescription = "",
-                Modifier
-                    .scale(1.25f)
-                    .fillMaxWidth()
-                    .fillMaxHeight())
 
-            Text(text = "This is just a demo text",
-                modifier = Modifier.align(Alignment.BottomCenter),
-                style = TextStyle(color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    fontFamily = FontFamily.SansSerif)
-            )
+@Composable
+fun PhotosByDurationBar(filterAccordingTo :Int , onChangeFilter : (Int) ->Unit) {
+
+        Button(onClick = {onChangeFilter(1) },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
+        ) {
+            Text(text = "Years")
         }
+    Button(onClick = { onChangeFilter(2) },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
+    ) {
+        Text(text = "Months")
     }
-}
-
-
-@Composable
-fun BottomNavigator(activeBadge :Int, onBadgeChange : (optionChangesTo :Int)->Unit) {
-
-    Box(modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomStart){
-        NavigationBar(containerColor = Color.Transparent,
-            ) {
-
-            NavigationBarItem(
-                icon = {
-                    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally)
-                   {
-                        Icon(
-                            painter = painterResource(id = R.drawable.library),
-                            contentDescription = "somthinf",
-                            tint = if (activeBadge != 1) {
-                                Color.DarkGray
-                            } else Color(0xFF3A9DBC),
-                            modifier = Modifier.scale(1.3f)
-                        )
-                       Text(text = "Library", color = if (activeBadge != 1) {
-                           Color.DarkGray
-                       } else Color(0xFF3A9DBC))
-                    }
-                }
-                ,
-                onClick = {onBadgeChange(1)},
-                selected = false
-            )
-            NavigationBarItem(
-                icon = {
-                    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally)
-                    {
-                        Icon(
-                            painter = painterResource(id = R.drawable.foryou),
-                            contentDescription = "somthinf",
-                            tint = if (activeBadge != 2) {
-                                Color.DarkGray
-                            } else Color(0xFF3A9DBC),
-                            modifier = Modifier.scale(1.3f)
-                        )
-                        Text(text = "For You", color = if (activeBadge != 2) {
-                            Color.DarkGray
-                        } else Color(0xFF3A9DBC))
-                    }
-                }
-                ,
-                onClick = {onBadgeChange(2)},
-                selected = false
-            )
-            NavigationBarItem(
-                icon = {
-                    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally)
-                    {
-                        Icon(
-                            painter = painterResource(id = R.drawable.albums),
-                            contentDescription = "somthinf",
-                            tint = if (activeBadge != 3) {
-                                Color.DarkGray
-                            } else Color(0xFF3A9DBC),
-                            modifier = Modifier.scale(1.3f)
-                        )
-                        Text(text = "Albums", color = if (activeBadge != 3) {
-                            Color.DarkGray
-                        } else Color(0xFF3A9DBC))
-                    }
-                }
-                ,
-                onClick = {onBadgeChange(3)},
-                selected = false
-            )
-            NavigationBarItem(
-                icon = {
-                    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally)
-                    {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_search_24),
-                            contentDescription = "somthinf",
-                            tint = if (activeBadge != 4) {
-                                Color.DarkGray
-                            } else Color(0xFF3A9DBC),
-                            modifier = Modifier.scale(1.3f)
-                        )
-                        Text(text = "Search", color = if (activeBadge != 4) {
-                            Color.DarkGray
-                        } else Color(0xFF3A9DBC))
-                    }
-                }
-                ,
-                onClick = {onBadgeChange(4)},
-                selected = false
-            )
-        }
+    Button(onClick = { onChangeFilter(3) },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
+    ) {
+        Text(text = "Days")
+    }
+    Button(onClick = { onChangeFilter(4)},
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black)
+    ) {
+        Text(text = "All Photos",)
     }
 
 }
-
