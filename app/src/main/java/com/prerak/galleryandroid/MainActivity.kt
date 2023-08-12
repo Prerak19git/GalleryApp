@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.prerak.galleryandroid.ui.theme.BottomNavigator
 import com.prerak.galleryandroid.ui.theme.DemoPhotos
+import com.prerak.galleryandroid.ui.theme.ForYouView
 import com.prerak.galleryandroid.ui.theme.GalleryAndroidTheme
 import kotlin.random.Random
 
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
                       //Conditional TopBox
                        when(activeBadge.value ){
                            1 -> LibraryView(DemoPhotos())
+                           2 -> ForYouView(DemoPhotos())
                            else->{}
 
                        }

@@ -33,18 +33,21 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
+import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.prerak.galleryandroid.ui.theme.DemoCard
+import com.prerak.galleryandroid.ui.theme.CardForLibrary
+
 import com.prerak.galleryandroid.ui.theme.PhotosData
 import java.time.Month
 
@@ -55,9 +58,6 @@ import kotlin.random.Random
 
 @Composable
 fun LibraryView(listOfPhotos : List<PhotosData>) {
-
-
-
 
     val filterAccordingTo  = remember {
         mutableStateOf(1)
@@ -107,13 +107,15 @@ fun YearlyPhotos(listOfPhotos : List<PhotosData>) {
             {   val year = listOfPhotos[it].date.year
 
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment =  Center){
-                    DemoCard(photo = listOfPhotos[it], 1)
+                    CardForLibrary(photo = listOfPhotos[it], 1)
 
                         Text(
                             text = "$year"  ,
-                            fontSize = 40.sp,
-                            modifier = Modifier.align(TopCenter),
-                            fontWeight = FontWeight.ExtraBold
+                            fontSize = 32.sp,
+                            modifier = Modifier.align(TopStart).offset(65.dp,y = 10.dp),
+                          style = TextStyle(color = Color(0xFFEBECF0), fontWeight = FontWeight.W800,
+                              fontFamily = FontFamily.SansSerif
+                          )
                         )
                 }
 
@@ -172,7 +174,7 @@ fun MonthlyPhotos(listOfPhotos : List<PhotosData>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Box{
-                    DemoCard(photo = listOfPhotos[it], 2)
+                    CardForLibrary(photo = listOfPhotos[it], 2)
                 }
                 Spacer(modifier = Modifier.height(35.dp))
             }
@@ -200,7 +202,7 @@ fun DailyPhotos(listOfPhotos : List<PhotosData>) {
                     .padding(10.dp),
                     contentAlignment = Center) {
 
-                    DemoCard(photo = listOfPhotos[it], 3)
+                    CardForLibrary(photo = listOfPhotos[it], 3)
                     Text(
                         text = Month.of(listOfPhotos[it].date.month).toString()
                                  .lowercase().capitalize() +
@@ -213,7 +215,9 @@ fun DailyPhotos(listOfPhotos : List<PhotosData>) {
                                 x = (-30).dp,
                                 y = 7.dp
                             ),
-                        fontWeight = FontWeight.W800
+                        style = TextStyle(color = Color(0xFFDBDEE3), fontWeight = FontWeight.W800,
+                            fontFamily = FontFamily.SansSerif
+                        )
 
                     )
                 }
@@ -237,7 +241,7 @@ fun AllPhotos(listOfPhotos : List<PhotosData>) {
         items(listOfPhotos.size)
         {
             Box{
-                DemoCard(photo = listOfPhotos[it], 4)
+                CardForLibrary(photo = listOfPhotos[it], 4)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

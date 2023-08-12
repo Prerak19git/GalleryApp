@@ -35,7 +35,7 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoCard(photo : PhotosData, filterAccordingTo : Int) {
+fun CardForLibrary(photo : PhotosData, filterAccordingTo : Int) {
     Card(
         shape = if(filterAccordingTo !=4){ RoundedCornerShape(15.dp) }
         else RoundedCornerShape(7.dp)
@@ -69,7 +69,7 @@ fun DemoCard(photo : PhotosData, filterAccordingTo : Int) {
             Image(painter = photo.imageResource,
                 contentDescription = "",
                 Modifier
-                    .scale(1.25f)
+                    .scale(1.6f)
                     .fillMaxWidth()
                     .fillMaxHeight())
 
@@ -83,13 +83,33 @@ fun DemoCard(photo : PhotosData, filterAccordingTo : Int) {
 fun DemoPhotos() :List<PhotosData> {
 
     val listOfPhotos = mutableListOf<PhotosData>()
-    repeat(100)
+    repeat(30)
     {
-        val x = PhotosData(imageResource = painterResource(id = R.drawable.demoimage),
+        val x = PhotosData(imageResource = painterResource(id = R.drawable.scene3),
             date = Date(month = Random.nextInt(1,12) ,
                 day  = Random.nextInt(1,30),
                 year =Random.nextInt(2000,2025))
             )
+
+        listOfPhotos.add(x)
+    }
+    repeat(30)
+    {
+        val x = PhotosData(imageResource = painterResource(id = R.drawable.scene1),
+            date = Date(month = Random.nextInt(1,12) ,
+                day  = Random.nextInt(1,30),
+                year =Random.nextInt(2000,2025))
+        )
+
+        listOfPhotos.add(x)
+    }
+    repeat(30)
+    {
+        val x = PhotosData(imageResource = painterResource(id = R.drawable.scene2),
+            date = Date(month = Random.nextInt(1,12) ,
+                day  = Random.nextInt(1,30),
+                year =Random.nextInt(2000,2025))
+        )
 
         listOfPhotos.add(x)
     }
