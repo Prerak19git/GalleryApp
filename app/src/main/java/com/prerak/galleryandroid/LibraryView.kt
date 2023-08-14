@@ -2,6 +2,23 @@ package com.prerak.galleryandroid
 
 import android.widget.Space
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,12 +37,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
@@ -37,6 +59,10 @@ import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
@@ -49,33 +75,53 @@ import androidx.compose.ui.unit.sp
 import com.prerak.galleryandroid.ui.theme.CardForLibrary
 
 import com.prerak.galleryandroid.ui.theme.PhotosData
+import kotlinx.coroutines.launch
 import java.time.Month
+import kotlin.math.absoluteValue
 
 import kotlin.random.Random
 
 
 
 
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun LibraryView(listOfPhotos : List<PhotosData>) {
 
-    val filterAccordingTo  = remember {
-        mutableStateOf(1)
-    }
-   val listOfPhotosSorted = listOfPhotos.sortedWith(compareBy<PhotosData> { it.date.year }.thenBy { it.date.month }.thenBy { it.date.day }).toList()
-
+    val libraryPagerState = rememberPagerState()
+    val pagerScope = rememberCoroutineScope()
+    val listOfPhotosSorted = listOfPhotos.sortedWith(compareBy<PhotosData> { it.date.year }.thenBy { it.date.month }.thenBy { it.date.day }).toList()
 
     Box (modifier = Modifier.fillMaxSize()) {
 
-       when(filterAccordingTo.value) {
-           1 -> YearlyPhotos(listOfPhotos = listOfPhotosSorted)
-           2->  MonthlyPhotos(listOfPhotos = listOfPhotosSorted)
-           3-> DailyPhotos(listOfPhotos = listOfPhotosSorted)
-           else ->{
-               AllPhotos(listOfPhotos = listOfPhotosSorted)
-           }
+        HorizontalPager(pageCount = 4,
+            state = libraryPagerState) {page ->
 
-       }
+                when (page) {
+                    0 -> {
+                        YearlyPhotos(listOfPhotos = listOfPhotosSorted)
+                    }
+
+                    1 -> {
+                        MonthlyPhotos(listOfPhotos = listOfPhotosSorted)
+                    }
+
+                    2 -> {
+                        DailyPhotos(listOfPhotos = listOfPhotosSorted)
+                    }
+
+                    else -> {
+                        AllPhotos(listOfPhotos = listOfPhotosSorted)
+                    }
+
+                }
+
+
+
+        }
+
+
+
 
        // The filters for photos
        Row(modifier = Modifier
@@ -86,8 +132,14 @@ fun LibraryView(listOfPhotos : List<PhotosData>) {
            )
            .align(BottomCenter),
            horizontalArrangement = Arrangement.SpaceAround,){
-           PhotosByDurationBar(filterAccordingTo = filterAccordingTo.value
-           ) { filterAccordingTo.value = it }
+           PhotosByDurationBar(
+           ) {
+               pagerScope.launch{libraryPagerState.animateScrollToPage(it-1,
+               animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing)
+                 )
+               }
+           }
+
        }
     }
 }
@@ -112,7 +164,9 @@ fun YearlyPhotos(listOfPhotos : List<PhotosData>) {
                         Text(
                             text = "$year"  ,
                             fontSize = 32.sp,
-                            modifier = Modifier.align(TopStart).offset(65.dp,y = 10.dp),
+                            modifier = Modifier
+                                .align(TopStart)
+                                .offset(65.dp, y = 10.dp),
                           style = TextStyle(color = Color(0xFFEBECF0), fontWeight = FontWeight.W800,
                               fontFamily = FontFamily.SansSerif
                           )
@@ -138,7 +192,7 @@ fun MonthlyPhotos(listOfPhotos : List<PhotosData>) {
         {
             if(it ==0 ||
                 ((listOfPhotos[it].date.year >= listOfPhotos[it-1].date.year)&&
-                        (listOfPhotos[it].date.month >= listOfPhotos[it-1].date.month))
+                        (listOfPhotos[it].date.month > listOfPhotos[it-1].date.month))
                 )
             {
 
@@ -246,4 +300,30 @@ fun AllPhotos(listOfPhotos : List<PhotosData>) {
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+@Composable
+fun PhotosByDurationBar(onChangeFilter : (Int) ->Unit) {
+
+    Button(onClick = {onChangeFilter(1) },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
+    ) {
+        Text(text = "Years")
+    }
+    Button(onClick = { onChangeFilter(2) },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
+    ) {
+        Text(text = "Months")
+    }
+    Button(onClick = { onChangeFilter(3) },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
+    ) {
+        Text(text = "Days")
+    }
+    Button(onClick = { onChangeFilter(4)},
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black)
+    ) {
+        Text(text = "All Photos",)
+    }
+
 }

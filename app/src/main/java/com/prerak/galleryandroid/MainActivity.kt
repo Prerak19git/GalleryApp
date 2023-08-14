@@ -99,28 +99,3 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Composable
-fun PhotosByDurationBar(filterAccordingTo :Int , onChangeFilter : (Int) ->Unit) {
-
-        Button(onClick = {onChangeFilter(1) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
-        ) {
-            Text(text = "Years")
-        }
-    Button(onClick = { onChangeFilter(2) },
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
-    ) {
-        Text(text = "Months")
-    }
-    Button(onClick = { onChangeFilter(3) },
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent,contentColor = Color.Black)
-    ) {
-        Text(text = "Days")
-    }
-    Button(onClick = { onChangeFilter(4)},
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Black)
-    ) {
-        Text(text = "All Photos",)
-    }
-
-}
