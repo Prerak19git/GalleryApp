@@ -76,14 +76,14 @@ fun BottomNavigator(activeBadge :Int, onBadgeChange : (optionChangesTo :Int)->Un
                         horizontalAlignment = Alignment.CenterHorizontally)
                     {
                         Icon(
-                            painter = painterResource(id = R.drawable.albums),
-                            contentDescription = "somthinf",
+                            painter = painterResource(id = R.drawable.baseline_shopping_bag_24),
+                            contentDescription = "shop",
                             tint = if (activeBadge != 3) {
                                 Color.DarkGray
                             } else Color(0xFF3A9DBC),
                             modifier = Modifier.scale(1f)
                         )
-                        Text(text = "Albums", color = if (activeBadge != 3) {
+                        Text(text = "Shop", color = if (activeBadge != 3) {
                             Color.DarkGray
                         } else Color(0xFF3A9DBC)
                         )

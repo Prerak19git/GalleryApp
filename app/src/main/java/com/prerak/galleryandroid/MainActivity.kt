@@ -3,6 +3,7 @@ package com.prerak.galleryandroid
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,13 +60,42 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
 import com.prerak.galleryandroid.ui.theme.BottomNavigator
 import com.prerak.galleryandroid.ui.theme.DemoPhotos
 import com.prerak.galleryandroid.ui.theme.ForYouView
 import com.prerak.galleryandroid.ui.theme.GalleryAndroidTheme
+import com.prerak.galleryandroid.ui.theme.ProductsDataBase
+import com.prerak.galleryandroid.ui.theme.ProductsUiState
+import com.prerak.galleryandroid.ui.theme.ProductsViewModel
+import com.prerak.galleryandroid.ui.theme.StateFullScreen
+import com.prerak.galleryandroid.ui.theme.StateLessScreen
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
+
+
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            ProductsDataBase::class.java,
+            "Products.db"
+        ).build()
+    }
+
+    private val viewModel by viewModels<ProductsViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory{
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return ProductsViewModel(db.dao) as T
+                }
+            }
+        }
+    )
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -83,8 +115,12 @@ class MainActivity : ComponentActivity() {
                        contentAlignment = Alignment.Center) {
                       //Conditional TopBox
                        when(activeBadge.value ){
-                           1 -> LibraryView(DemoPhotos())
+                           1 -> LibraryView( DemoPhotos())
                            2 -> ForYouView(DemoPhotos())
+                           3-> {
+                               val productUiState by viewModel.productsUiState.collectAsState()
+                               StateLessScreen(productUiState)
+                           }
                            else->{}
 
                        }

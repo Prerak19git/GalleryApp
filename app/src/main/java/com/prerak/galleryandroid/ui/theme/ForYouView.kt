@@ -53,8 +53,7 @@ fun ForYouView( listOfPhotos : List<PhotosData> ) {
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(color = Color(0xFFE8E9EB)), contentAlignment = Alignment.Center)
-    {
+        .background(color = Color(0xFFE8E9EB)), contentAlignment = Alignment.Center) {
         LazyColumn(modifier = Modifier.fillMaxSize())
         {
 
@@ -99,19 +98,14 @@ fun ForYouView( listOfPhotos : List<PhotosData> ) {
 
                 Box(modifier =Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
 
-                    LazyRow(modifier = Modifier.fillMaxSize())
-                    {
-                        items(listOfPhotosSorted.size)
-                        {
+                    LazyRow(modifier = Modifier.fillMaxSize()) {
+                        items(listOfPhotosSorted.size) {
                             Spacer(modifier = Modifier.width(15.dp))
                             ForYouCard(photo = listOfPhotosSorted[it])
 
                         }
                     }
-
-
                 }
-
             }
         }
     }
@@ -133,10 +127,8 @@ fun ForYouCard(photo : PhotosData ) {
             defaultElevation = 10.dp
         ),
 
-        )
-    {
-        Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
-        {
+        ) {
+        Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(painter = photo.imageResource,
                 contentDescription = "",
                 Modifier
